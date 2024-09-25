@@ -3,14 +3,6 @@
 #include <string.h>
 #include "pesquisa.h"
 
-void liberaMatriz(char **matriz, int l, int c){
-    int i;
-    for (i=0; i<l; i++){
-        free(matriz[i]);
-    }
-    free(matriz);
-}
-
 void converteStringMatriz(char **mat, char *string, int linhas, int colunas){
     int i, j;
     for (i=0; i<linhas; i++){
@@ -47,11 +39,11 @@ void elaboraMatriz(char **mat,int linhas,int colunas){
         }
     }
     novastring[j]='\0';
-    free(string);
+    //free(string);
     printf("\n\n%s\n\n", novastring);
     converteStringMatriz(mat, novastring, linhas, colunas);
     printaMatriz(mat, novastring, linhas, colunas);
-    free(novastring);
+    //free(novastring);
 }
 
 void printaMatriz(char **mat, char *string, int linha, int coluna){
@@ -80,30 +72,28 @@ void recebeEntrada(char **mat, int l, int c){
     char palavra[20];
     do{
         printf("\nEscreva a palavra que deseja procurar ou escreva SAIR para sair:");
-        scanf("%s", &palavra);
-        if (palavra=="SAIR"){
-            return 0;
+        scanf("%s", palavra);
+        if (!(strcmp(palavra, "SAIR"))){
+            exit(1);
         }
         pesquisa(mat, palavra, l, c);
     } while (palavra!="1");
 }
 
-
 int main()
 {
-    int l,c, i;
+    int l, c, i;
     char **mat;
     printf("\nDigite o numero de linhas:");
     scanf("%d", &l);
     printf("\nDigite o numero de colunas:");
     scanf("%d", &c);
     mat=(char**)malloc(l*sizeof(char*));
-    for (i=0; i<c; i++){
+    for (i=0; i<l; i++){
         mat[i]=(char*)malloc(c*sizeof(char));
     }
     elaboraMatriz(mat, l, c);
-    liberaMatriz(mat, l, c);
-    recebeEntrada(mat, l, c);
 
+    recebeEntrada(mat, l, c);
     return 0;
 }

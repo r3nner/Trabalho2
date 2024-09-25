@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "pesquisa.h"
 
-int direcao(int x, int y, char *palavra, char **matriz, int tamMatriz){
+int direcao(int x, int y, char *palavra, char **matriz, int l, int c){
     // Direções:
     // horizontal para a direita
-    if (y + 1 < tamMatriz && matriz[x][y + 1] == palavra[1]) {
+    if (y + 1 < c && matriz[x][y + 1] == palavra[1]) {
         return 1;
     }
     // horizontal para a esquerda
@@ -17,41 +18,40 @@ int direcao(int x, int y, char *palavra, char **matriz, int tamMatriz){
         return 3;
     }
     // vertical para baixo
-    else if (x + 1 < tamMatriz && matriz[x + 1][y] == palavra[1]) {
+    else if (x + 1 < l && matriz[x + 1][y] == palavra[1]) {
         return 4;
     }
     // diagonal principal normal
-    else if (x + 1 < tamMatriz && y + 1 < tamMatriz && matriz[x + 1][y + 1] == palavra[1]) {
+    else if (x + 1 < l && y + 1 < c && matriz[x + 1][y + 1] == palavra[1]) {
         return 5;
     }
     // diagonal secundária normal
-    else if (x + 1 < tamMatriz && y - 1 >= 0 && matriz[x + 1][y - 1] == palavra[1]) {
+    else if (x + 1 < l && y - 1 >= 0 && matriz[x + 1][y - 1] == palavra[1]) {
         return 6;
     }
     // diagonal principal reversa
-    else if (x - 1 >= 0 && y + 1 < tamMatriz && matriz[x - 1][y + 1] == palavra[1]) {
+    else if (x - 1 >= 0 && y + 1 < c && matriz[x - 1][y + 1] == palavra[1]) {
         return 7;
     }
     // diagonal secundária reversa
     else if (x - 1 >= 0 && y - 1 >= 0 && matriz[x - 1][y - 1] == palavra[1]) {
         return 8;
     }
-
     return 0;
 }
 
-int restantePalavra(int x, int y, char palavra[], char **matriz, int tamMatriz){
+int restantePalavra(int x, int y, char palavra[], char **matriz, int l, int c){
     int tamPalavra = strlen(palavra);
-    int sentido = direcao(x, y, palavra, matriz, tamMatriz);
+    int sentido = direcao(x, y, palavra, matriz, l, c);
 
-    int j; 
+    int j;
     switch (sentido){
         case 0:
             return 0;
 
         case 1: // horizontal direita
             for (j = 0; j < tamPalavra; j++){  // Inicializando j corretamente
-                if ( y + j >= tamMatriz || matriz[x][y + j] != palavra[j] ){
+                if ( y + j >= c || matriz[x][y + j] != palavra[j] ){
                     return 0;
                 }
             }
@@ -75,7 +75,7 @@ int restantePalavra(int x, int y, char palavra[], char **matriz, int tamMatriz){
 
         case 4: // vertical para baixo
             for (j = 0; j < tamPalavra; j++){
-                if (x + j >= tamMatriz || matriz[x + j][y] != palavra[j] ){
+                if (x + j >= l || matriz[x + j][y] != palavra[j] ){
                     return 0;
                 }
             }
@@ -83,7 +83,7 @@ int restantePalavra(int x, int y, char palavra[], char **matriz, int tamMatriz){
 
         case 5: // diagonal principal normal
             for (j = 0; j < tamPalavra; j++){
-                if ( x + j >= tamMatriz || y + j >= tamMatriz || matriz[x + j][y + j] != palavra[j]){
+                if ( x + j >= l || y + j >= c || matriz[x + j][y + j] != palavra[j]){
                     return 0;
                 }
             }
@@ -91,7 +91,7 @@ int restantePalavra(int x, int y, char palavra[], char **matriz, int tamMatriz){
 
         case 6: // diagonal secundária normal
             for (j = 0; j < tamPalavra; j++){
-                if ( x + j >= tamMatriz || y - j < 0 || matriz[x + j][y - j] != palavra[j] ){
+                if ( x + j >= l || y - j < 0 || matriz[x + j][y - j] != palavra[j] ){
                     return 0;
                 }
             }
@@ -99,7 +99,7 @@ int restantePalavra(int x, int y, char palavra[], char **matriz, int tamMatriz){
 
         case 7: // diagonal principal reversa
             for (j = 0; j < tamPalavra; j++){
-                if (x - j < 0 || y + j >= tamMatriz || matriz[x - j][y + j] != palavra[j] ){
+                if (x - j < 0 || y + j >= c || matriz[x - j][y + j] != palavra[j] ){
                     return 0;
                 }
             }
@@ -135,13 +135,13 @@ int restantePalavra(int x, int y, char palavra[], char **matriz, int tamMatriz){
     return 1;
 }
 
-void pesquisa(char **matriz, char palavra[], int tamMatriz){
+void pesquisa(char **matriz, char* palavra, int l, int c){
     // Busca a primeira letra da palavra
     int flag = 0;
-    for (int i = 0; i < tamMatriz; i++){
-        for (int j = 0; j < tamMatriz; j++){
+    for (int i = 0; i < l; i++){
+        for (int j = 0; j < c; j++){
             if (matriz[i][j] == palavra[0]){
-                flag = restantePalavra(i, j, palavra, matriz, tamMatriz);
+                flag = restantePalavra(i, j, palavra, matriz, l, c);
                 if (flag == 1){
                     return;
                 }
@@ -149,25 +149,6 @@ void pesquisa(char **matriz, char palavra[], int tamMatriz){
         }
     }
     if (flag == 0){
-        printf("Palavra não encontrada.\n");
+        printf("Palavra nao encontrada.\n");
     }
 }
-/*
-int main() {
-    int tamMatriz = 7;
-    char *matriz[] = {
-        "oBCDXDA",
-        "XlLOPAS",
-        "CDaFGJG",
-        "POLMXKJ",
-        "PMAXPJK",
-        "AIDISOS", 
-        "assjsjj"
-    };
-
-    char palavra[] = "AAGM";
-    pesquisa(matriz, palavra, tamMatriz);
-
-    return 0;
-}
-*/

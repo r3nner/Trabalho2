@@ -2,8 +2,6 @@
 
 #define pesquisa_h
 
-
-
 int direcao(int x, int y, char *palavra, char **matriz, int tamMatriz);
 
 int restantePalavra(int x, int y, char palavra[], char **matriz, int tamMatriz);

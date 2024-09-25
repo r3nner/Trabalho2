@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "pesquisa.h"
 
 void liberaMatriz(char **matriz, int l, int c){
     int i;
@@ -66,16 +67,27 @@ void printaMatriz(char **mat, char *string, int linha, int coluna){
         printf(" %d  ", i+1);
         for (j=0; j<coluna; j++){
             if (cont>=tam){
-                printf("   ");
+                mat[i][j]='\0';
             }
-            else{
-                printf(" %c ", mat[i][j]);
-            }
+            printf(" %c ", mat[i][j]);
             cont++;
         }
         printf("\n");
     }
 }
+
+void recebeEntrada(char **mat, int l, int c){
+    char palavra[20];
+    do{
+        printf("\nEscreva a palavra que deseja procurar ou escreva SAIR para sair:");
+        scanf("%s", &palavra);
+        if (palavra=="SAIR"){
+            return 0;
+        }
+        pesquisa(mat, palavra, l, c);
+    } while (palavra!="1");
+}
+
 
 int main()
 {
@@ -91,5 +103,7 @@ int main()
     }
     elaboraMatriz(mat, l, c);
     liberaMatriz(mat, l, c);
+    recebeEntrada(mat, l, c);
+
     return 0;
 }

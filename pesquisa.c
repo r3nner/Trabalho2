@@ -3,48 +3,114 @@
 #include <string.h>
 #include "pesquisa.h"
 
-int direcao(int x, int y, char *palavra, char **matriz, int l, int c){
-    // Direções:
-    // horizontal para a direita
-    if (y + 1 < c && matriz[x][y + 1] == palavra[1]) {
-        return 1;
+int direcao(int x, int y, char *palavra, char **matriz, int l, int c) {
+    int tamPalavra = strlen(palavra);
+    int match, i;
+    // Horizontal para a direita
+    if (y + tamPalavra - 1 < c) {
+        match = 1;
+        for (i = 1; i < tamPalavra; i++) {
+            if (matriz[x][y + i] != palavra[i]) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) return 1;
     }
-    // horizontal para a esquerda
-    else if (y - 1 >= 0 && matriz[x][y - 1] == palavra[1]) {
-        return 2;
+
+    // Horizontal para a esquerda
+    if (y - (tamPalavra - 1) >= 0) {
+        match = 1;
+        for (i = 1; i < tamPalavra; i++) {
+            if (matriz[x][y - i] != palavra[i]) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) return 2;
     }
-    // vertical para cima
-    else if (x - 1 >= 0 && matriz[x - 1][y] == palavra[1]) {
-        return 3;
+
+    // Vertical para cima
+    if (x - (tamPalavra - 1) >= 0) {
+        match = 1;
+        for (i = 1; i < tamPalavra; i++) {
+            if (matriz[x - i][y] != palavra[i]) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) return 3;
     }
-    // vertical para baixo
-    else if (x + 1 < l && matriz[x + 1][y] == palavra[1]) {
-        return 4;
+
+    // Vertical para baixo
+    if (x + tamPalavra - 1 < l) {
+        match = 1;
+        for (i = 1; i < tamPalavra; i++) {
+            if (matriz[x + i][y] != palavra[i]) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) return 4;
     }
-    // diagonal principal normal
-    else if (x + 1 < l && y + 1 < c && matriz[x + 1][y + 1] == palavra[1]) {
-        return 5;
+
+    // Diagonal principal normal (baixo-direita)
+    if (x + tamPalavra - 1 < l && y + tamPalavra - 1 < c) {
+        match = 1;
+        for (i = 1; i < tamPalavra; i++) {
+            if (matriz[x + i][y + i] != palavra[i]) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) return 5;
     }
-    // diagonal secundária normal
-    else if (x + 1 < l && y - 1 >= 0 && matriz[x + 1][y - 1] == palavra[1]) {
-        return 6;
+
+    // Diagonal secundária normal (baixo-esquerda)
+    if (x + tamPalavra - 1 < l && y - (tamPalavra - 1) >= 0) {
+        match = 1;
+        for (i = 1; i < tamPalavra; i++) {
+            if (matriz[x + i][y - i] != palavra[i]) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) return 6;
     }
-    // diagonal principal reversa
-    else if (x - 1 >= 0 && y + 1 < c && matriz[x - 1][y + 1] == palavra[1]) {
-        return 7;
+
+    // Diagonal principal reversa (cima-direita)
+    if (x - (tamPalavra - 1) >= 0 && y + tamPalavra - 1 < c) {
+        match = 1;
+        for (i = 1; i < tamPalavra; i++) {
+            if (matriz[x - i][y + i] != palavra[i]) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) return 7;
     }
-    // diagonal secundária reversa
-    else if (x - 1 >= 0 && y - 1 >= 0 && matriz[x - 1][y - 1] == palavra[1]) {
-        return 8;
+
+    // Diagonal secundária reversa (cima-esquerda)
+    if (x - (tamPalavra - 1) >= 0 && y - (tamPalavra - 1) >= 0) {
+        int match = 1;
+        for (int i = 1; i < tamPalavra; i++) {
+            if (matriz[x - i][y - i] != palavra[i]) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) return 8;
     }
-    return 0;
+
+    return 0;  // Não encontrou direção válida
 }
 
-int restantePalavra(int x, int y, char palavra[], char **matriz, int l, int c){
-    int tamPalavra = strlen(palavra);
-    int sentido = direcao(x, y, palavra, matriz, l, c);
 
+int restantePalavra(int x, int y, char* palavra, char **matriz, int l, int c){
+    int tamPalavra = strlen(palavra);
     int j;
+
+    int sentido = direcao(x, y, palavra, matriz, l, c);
     switch (sentido){
         case 0:
             return 0;
@@ -83,7 +149,7 @@ int restantePalavra(int x, int y, char palavra[], char **matriz, int l, int c){
 
         case 5: // diagonal principal normal
             for (j = 0; j < tamPalavra; j++){
-                if ( x + j >= l || y + j >= c || matriz[x + j][y + j] != palavra[j]){
+                if (x + j >= l || y + j >= c || matriz[x + j][y + j] != palavra[j]){
                     return 0;
                 }
             }
@@ -91,7 +157,7 @@ int restantePalavra(int x, int y, char palavra[], char **matriz, int l, int c){
 
         case 6: // diagonal secundária normal
             for (j = 0; j < tamPalavra; j++){
-                if ( x + j >= l || y - j < 0 || matriz[x + j][y - j] != palavra[j] ){
+                if (x + j >= l || y - j < 0 || matriz[x + j][y - j] != palavra[j] ){
                     return 0;
                 }
             }
@@ -116,21 +182,21 @@ int restantePalavra(int x, int y, char palavra[], char **matriz, int l, int c){
 
    //exibir
     if (sentido == 1){
-        printf("\nPalavra %s ocorre na horizontal direta, iniciando na posição [%i,%i] e terminando na posição [%d, %d].\n", palavra, x + 1, y + 1, x + 1, y + j);
+        printf("\nPalavra %s ocorre na horizontal direta, iniciando na posicao [%i,%i] e terminando na posicao [%d, %d].\n", palavra, x + 1, y + 1, x + 1, y + j);
     } else if (sentido == 2){
-        printf("\nPalavra %s ocorre na horizontal reversa, iniciando na posição [%i,%i] e terminando na posição [%d, %d].\n", palavra, x + 1, y + 1, x + 1, y - j + 2);
+        printf("\nPalavra %s ocorre na horizontal reversa, iniciando na posicao [%i,%i] e terminando na posicao [%d, %d].\n", palavra, x + 1, y + 1, x + 1, y - j + 2);
     } else if (sentido == 3){
-        printf("\nPalavra %s ocorre na vertical reversa, iniciando na posição [%i,%i] e terminando na posição [%d, %d].\n", palavra, x + 1, y + 1, x - j + 2, y + 1);
+        printf("\nPalavra %s ocorre na vertical reversa, iniciando na posicao [%i,%i] e terminando na posicao [%d, %d].\n", palavra, x + 1, y + 1, x - j + 2, y + 1);
     } else if (sentido == 4){
-        printf("\nPalavra %s ocorre na vertical direta, iniciando na posição [%i,%i] e terminando na posição [%d, %d].\n", palavra, x + 1, y + 1, x + j, y + 1);
+        printf("\nPalavra %s ocorre na vertical direta, iniciando na posicao [%i,%i] e terminando na posicao [%d, %d].\n", palavra, x + 1, y + 1, x + j, y + 1);
     } else if (sentido == 5){
-        printf("\nPalavra %s ocorre na diagonal principal direta, iniciando na posição [%i,%i] e terminando na posição [%d, %d].\n", palavra, x + 1, y + 1, x + j, y + j);
+        printf("\nPalavra %s ocorre na diagonal principal direta, iniciando na posicao [%i,%i] e terminando na posicao [%d, %d].\n", palavra, x + 1, y + 1, x + j, y + j);
     } else if (sentido == 6){
-        printf("\nPalavra %s ocorre na diagonal secundária direta, iniciando na posição [%i,%i] e terminando na posição [%d, %d].\n", palavra, x + 1, y + 1, x + j, y - j + 2);
+        printf("\nPalavra %s ocorre na diagonal secundária direta, iniciando na posicao [%i,%i] e terminando na posicao [%d, %d].\n", palavra, x + 1, y + 1, x + j, y - j + 2);
     } else if (sentido == 7){
-        printf("\nPalavra %s ocorre na diagonal secundária reversa, iniciando na posição [%i,%i] e terminando na posição [%d, %d].\n", palavra, x + 1, y + 1, x - j + 2, y + j);
+        printf("\nPalavra %s ocorre na diagonal secundária reversa, iniciando na posicao [%i,%i] e terminando na posicao [%d, %d].\n", palavra, x + 1, y + 1, x - j + 2, y + j);
     } else if (sentido == 8){
-        printf("\nPalavra %s ocorre na diagonal principal reversa, iniciando na posição [%i,%i] e terminando na posição [%d, %d].\n", palavra, x + 1, y + 1, x - j + 2, y - j + 2);
+        printf("\nPalavra %s ocorre na diagonal principal reversa, iniciando na posicao [%i,%i] e terminando na posicao [%d, %d].\n", palavra, x + 1, y + 1, x - j + 2, y - j + 2);
     }
     return 1;
 }

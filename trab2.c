@@ -67,7 +67,6 @@ void elaboraMatriz(char **mat, int linhas, int colunas){
     }
     novastring[j] = '\0';
     
-    printf("\n\n%s\n\n", novastring);
     converteStringMatriz(mat, novastring, linhas, colunas);
     printaMatriz(mat, novastring, linhas, colunas);
     
